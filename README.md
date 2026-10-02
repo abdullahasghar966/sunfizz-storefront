@@ -123,19 +123,31 @@ app/
 public/fx/                   decorative SVGs (the CSP blocks data: images)
 catalog/                     product images, import CSV and the generator script
 scripts/qa/                  regression, game, performance and Lighthouse scripts
-scripts/deploy-vercel.mjs    package + deploy to Vercel (the live site)
+scripts/deploy-vercel.mjs + vercel.json   Vercel build on every push (the live site), local deploy
 scripts/deploy-cloudflare.mjs + wrangler.jsonc   deploy to Cloudflare Workers (alternative)
 ```
 
 ## Deploying
 
 The production build (`npm run build`) is a web-standard worker module, so it runs unchanged
-on Shopify Oxygen, Vercel's Edge runtime and Cloudflare Workers. All three read the same four
-`.env` values; the scripts never print them.
+on Shopify Oxygen, Vercel's Edge runtime and Cloudflare Workers. All three use the same four
+variables; the scripts read them from `.env` and never print them.
 
 ### Vercel: the public live site (free Hobby plan)
 
-Once per machine:
+The Vercel project `sunfizz` is connected to this GitHub repository:
+
+- **A push to `main` deploys the live site.** Vercel runs
+  `node scripts/deploy-vercel.mjs --package-only` (set in `vercel.json`) and switches the live URL
+  over only when the build succeeds.
+- **A push to any other branch** gets its own preview URL (visible only when logged in to Vercel).
+
+The build packages the site in Vercel's Build Output format: `dist/client` as static files (hashed
+`/assets` cached for a year) and one Edge function that wraps the worker. The four variables live
+in the Vercel project (Production and Preview), not in the repository: `PUBLIC_*` as config,
+`SESSION_SECRET` as a secret.
+
+To deploy from your own machine instead, log in once:
 
 ```bash
 npx vercel@latest login
@@ -147,13 +159,8 @@ Then build and deploy:
 node scripts/deploy-vercel.mjs
 ```
 
-The script:
-1. Builds the site.
-2. Packages it in Vercel's Build Output format: `dist/client` as static files (hashed
-   `/assets` cached for a year) and one Edge function that wraps the worker.
-3. Links the `sunfizz` project on first run.
-4. Adds any missing production variables: `PUBLIC_*` as config, `SESSION_SECRET` as a secret.
-5. Deploys to production.
+This builds and packages the same way, links the project on first run, adds any missing variables
+from `.env`, and deploys to production.
 
 Vercel's Edge runtime has no Cache API, so the wrapper gives Hydrogen a no-op cache (pages fetch
 from Shopify on every request).

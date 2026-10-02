@@ -1,7 +1,12 @@
 // Package the Hydrogen production build for Vercel's Edge runtime and deploy it
 // (free Hobby plan, public URL). The site itself is unchanged: Vercel runs the
 // same web-standard worker module that Oxygen runs, behind a tiny wrapper.
-// Once per machine: `npx vercel@latest login`. Values come from .env; none are printed.
+//
+// Two ways in:
+// - GitHub: Vercel builds every push with `--package-only` (vercel.json). That needs no
+//   .env: the function reads the project's variables at runtime.
+// - Local: a run without flags also syncs the variables from .env (piped, never printed)
+//   and deploys to production. Once per machine: `npx vercel@latest login`.
 // Usage: node scripts/deploy-vercel.mjs [--skip-build] [--package-only]
 import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
@@ -14,21 +19,27 @@ const FUNC = path.join(OUT, 'functions', 'index.func');
 const PROJECT = 'sunfizz';
 const VARS = ['PUBLIC_STORE_DOMAIN', 'PUBLIC_STOREFRONT_API_TOKEN', 'PUBLIC_CHECKOUT_DOMAIN', 'SESSION_SECRET'];
 const args = new Set(process.argv.slice(2));
+const packageOnly = args.has('--package-only');
 
-const env = Object.fromEntries(
-  fs
-    .readFileSync(path.join(ROOT, '.env'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => /^[A-Z0-9_]+=/.test(line))
-    .map((line) => {
-      const i = line.indexOf('=');
-      return [line.slice(0, i), line.slice(i + 1).trim().replace(/^(['"])(.*)\1$/, '$2')];
-    }),
-);
-const missing = VARS.filter((key) => !env[key]);
+// Only a local deploy reads .env (Vercel's build machines have none).
+const env = packageOnly ? {} : readDotEnv();
+const missing = packageOnly ? [] : VARS.filter((key) => !env[key]);
 if (missing.length) {
   console.error(`Missing in .env: ${missing.join(', ')}`);
   process.exit(1);
+}
+
+function readDotEnv() {
+  return Object.fromEntries(
+    fs
+      .readFileSync(path.join(ROOT, '.env'), 'utf8')
+      .split(/\r?\n/)
+      .filter((line) => /^[A-Z0-9_]+=/.test(line))
+      .map((line) => {
+        const i = line.indexOf('=');
+        return [line.slice(0, i), line.slice(i + 1).trim().replace(/^(['"])(.*)\1$/, '$2')];
+      }),
+  );
 }
 
 // shell: true resolves npx/npm on Windows.
@@ -91,21 +102,24 @@ fs.writeFileSync(
   ),
 );
 process.stdout.write('Packaged .vercel/output\n');
-if (args.has('--package-only')) process.exit(0);
+if (packageOnly) process.exit(0);
 
 // 3. Link the project once (creates "sunfizz" in your Vercel account).
 if (!fs.existsSync(path.join(ROOT, '.vercel', 'project.json'))) {
   vercel(['link', '--yes', '--project', PROJECT]);
 }
 
-// 4. Production environment variables, piped in so values never appear in a command line.
-const listed = vercel(['env', 'ls', 'production'], {stdio: ['ignore', 'pipe', 'inherit'], encoding: 'utf8'}).stdout ?? '';
-for (const key of VARS) {
-  if (new RegExp(`\\b${key}\\b`).test(listed)) continue;
-  // PUBLIC_* values are public by design (Hydrogen sends the storefront token to browsers): "config".
-  // Anything else is a real secret.
-  const type = key.startsWith('PUBLIC_') ? 'config' : 'secret';
-  vercel(['env', 'add', key, 'production', '--type', type, '--yes'], {input: env[key], stdio: ['pipe', 'inherit', 'inherit']});
+// 4. Variables for production and for previews (pushes to other Git branches),
+//    piped in so values never appear in a command line.
+for (const target of ['production', 'preview']) {
+  const listed = vercel(['env', 'ls', target], {stdio: ['ignore', 'pipe', 'inherit'], encoding: 'utf8'}).stdout ?? '';
+  for (const key of VARS) {
+    if (new RegExp(`\\b${key}\\b`).test(listed)) continue;
+    // PUBLIC_* values are public by design (Hydrogen sends the storefront token to browsers): "config".
+    // Anything else is a real secret.
+    const type = key.startsWith('PUBLIC_') ? 'config' : 'secret';
+    vercel(['env', 'add', key, target, '--type', type, '--yes'], {input: env[key], stdio: ['pipe', 'inherit', 'inherit']});
+  }
 }
 
 // 5. Deploy the packaged output to production.
