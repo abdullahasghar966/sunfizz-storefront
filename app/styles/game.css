@@ -1,0 +1,149 @@
+/*
+* --------------------------------------------------
+* Phase 6: Fizz Dash, the footer mini-game (components/game/FooterGame)
+* A quiet panel until someone plays: a still poster frame, a hint, no motion.
+* --------------------------------------------------
+*/
+.fizz-dash {
+  margin: 0 auto 2rem;
+  max-width: var(--sf-max-wide);
+}
+
+.fizz-dash-head {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.fizz-dash-title {
+  align-items: center;
+  color: var(--sf-lemon);
+  display: inline-flex;
+  font-size: 1.05rem;
+  font-weight: 650;
+  gap: 0.4rem;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.fizz-dash-hint {
+  color: rgb(255 247 232 / 0.7);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.fizz-dash-hint kbd {
+  border: 1px solid rgb(255 247 232 / 0.35);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  padding: 0.05rem 0.4rem;
+}
+
+.fizz-dash-hint-touch {
+  display: none;
+}
+
+@media (hover: none) {
+  .fizz-dash-hint-keys {
+    display: none;
+  }
+
+  .fizz-dash-hint-touch {
+    display: inline;
+  }
+}
+
+.fizz-dash-stage {
+  -webkit-tap-highlight-color: transparent;
+  background:
+    radial-gradient(120% 90% at 50% 125%, rgb(255 210 63 / 0.16), transparent 62%),
+    rgb(255 247 232 / 0.04);
+  border: 1px solid rgb(255 247 232 / 0.12);
+  border-radius: var(--sf-radius-m);
+  height: 168px; /* the jump apex (~89px) needs it; also fits phones */
+  overflow: hidden;
+  position: relative;
+  touch-action: manipulation; /* a tap jumps; a swipe still scrolls the page */
+  transition: border-color var(--sf-dur-micro) var(--sf-ease-out);
+  user-select: none;
+}
+
+.fizz-dash-stage:hover {
+  border-color: rgb(255 247 232 / 0.28);
+}
+
+/* Without the custom cursor (touch, reduced motion), show that it's clickable. */
+html:not(.has-custom-cursor) .fizz-dash-stage {
+  cursor: pointer;
+}
+
+.fizz-dash-canvas {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.fizz-dash-overlay {
+  align-content: start;
+  color: var(--sf-cream);
+  display: grid;
+  gap: 0.15rem;
+  inset: 0;
+  justify-items: center;
+  padding: 1.1rem 1rem 0;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+}
+
+.fizz-dash-overlay strong {
+  color: var(--sf-lemon);
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.fizz-dash-overlay span {
+  font-size: 0.9rem;
+}
+
+.fizz-dash-action {
+  opacity: 0.75;
+}
+
+/* One instruction at a time: keyboard focus, mouse, or touch. */
+.fizz-dash-when-focused,
+.fizz-dash-when-touch {
+  display: none;
+}
+
+.fizz-dash-stage:focus .fizz-dash-when-focused {
+  display: inline;
+}
+
+.fizz-dash-stage:focus .fizz-dash-when-blurred {
+  display: none;
+}
+
+@media (hover: none) {
+  .fizz-dash-stage .fizz-dash-when-blurred,
+  .fizz-dash-stage:focus .fizz-dash-when-focused {
+    display: none;
+  }
+
+  .fizz-dash-when-touch {
+    display: inline;
+  }
+}
+
+/* Over the dark footer the cursor's labelled disc turns lemon, so "Play" stays readable. */
+.cursor-on-dark .cursor.is-label {
+  background: var(--sf-lemon);
+}
+
+.cursor-on-dark .cursor-label {
+  color: var(--sf-ink);
+}

@@ -1,0 +1,209 @@
+/*
+* --------------------------------------------------
+* Phase 5: site-wide polish
+* (the pour overlay: preloader, page transitions, checkout handoff)
+* --------------------------------------------------
+*/
+
+/*
+* --------------------------------------------------
+* The pour: preloader + page transitions + checkout handoff (lib/pour.ts)
+* --------------------------------------------------
+*/
+.pour {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  visibility: hidden;
+  z-index: 9000; /* above the page, header, drawers and card ghost; the cursor (9999) stays on top */
+}
+
+.pour.is-active,
+.is-preloading .pour {
+  visibility: visible;
+}
+
+/* While covered, the liquid blocks clicks on the page underneath. */
+.pour.is-active,
+.is-preloading .pour {
+  pointer-events: auto;
+}
+
+.pour-backdrop {
+  background: var(--sf-cream);
+  display: none;
+  inset: 0;
+  position: absolute;
+}
+
+.is-preloading .pour-backdrop {
+  display: block;
+}
+
+.pour-liquid {
+  --wave-h: clamp(40px, 7vh, 72px);
+  background: linear-gradient(180deg, #ffd23f 0%, #ffa938 45%, #ff7a1a 100%);
+  height: 100%;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translate3d(0, 112%, 0); /* parked below; GSAP takes over (yPercent) */
+  will-change: transform;
+}
+
+/* Before hydration the first-load fill creeps up on its own, so it never looks stuck. */
+.is-preloading .pour-liquid {
+  animation: sf-pour-prefill 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes sf-pour-prefill {
+  from {
+    transform: translate3d(0, 96%, 0);
+  }
+  to {
+    transform: translate3d(0, 52%, 0);
+  }
+}
+
+/* Wavy edges: a double-width strip of repeating waves drifting sideways. */
+.pour-wave {
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  height: var(--wave-h);
+  left: 0;
+  position: absolute;
+  width: 200%;
+}
+
+.pour-wave--top {
+  background-image: url("/fx/wave-top.svg"); /* a file, not a data: URI: the CSP blocks those */
+  bottom: calc(100% - 1px);
+}
+
+.pour-wave--bottom {
+  background-image: url("/fx/wave-bottom.svg");
+  top: calc(100% - 1px);
+}
+
+.pour.is-active .pour-wave,
+.is-preloading .pour-wave {
+  animation: sf-wave-drift 3.2s linear infinite;
+}
+
+.pour-wave--bottom {
+  animation-direction: reverse !important;
+}
+
+@keyframes sf-wave-drift {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Soda bubbles rising through the liquid */
+.pour-bubbles span {
+  animation: sf-bubble-rise 2.4s linear infinite paused;
+  background: rgb(255 255 255 / 0.45);
+  border: 1.5px solid rgb(255 255 255 / 0.8);
+  border-radius: 50%;
+  bottom: -20px;
+  position: absolute;
+}
+
+.pour.is-active .pour-bubbles span,
+.is-preloading .pour-bubbles span {
+  animation-play-state: running;
+}
+
+@keyframes sf-bubble-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -85vh, 0);
+  }
+}
+
+/* Wordmark + label: shown while preloading, on slow page loads and for checkout. */
+.pour-center {
+  align-content: center;
+  color: var(--sf-ink);
+  display: grid;
+  inset: 0;
+  justify-items: center;
+  opacity: 0;
+  position: absolute;
+  text-align: center;
+  transition: opacity var(--sf-dur-fast) var(--sf-ease-out);
+}
+
+.is-preloading .pour-center,
+.pour.show-center .pour-center {
+  opacity: 1;
+}
+
+.pour-word {
+  font-family: var(--sf-font-display);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin: 0 0 0.75rem;
+}
+
+.pour-word span {
+  color: var(--sf-accent-text);
+}
+
+.pour-label {
+  font-family: var(--sf-font-display);
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  font-weight: 600;
+  margin: 0;
+}
+
+.pour-sub {
+  font-family: var(--sf-font-display);
+  font-size: 1rem;
+  margin: 0.35rem 0 0;
+}
+
+.pour-sub:empty {
+  display: none;
+}
+
+/* Preloading: no scrolling, and if JS never takes over, get out of the way. */
+html.is-preloading {
+  animation: sf-unlock 0s linear 4s forwards;
+  overflow: hidden;
+}
+
+.is-preloading .pour {
+  animation: sf-pour-fallback 0s linear 4s forwards;
+}
+
+@keyframes sf-unlock {
+  to {
+    overflow: visible;
+  }
+}
+
+@keyframes sf-pour-fallback {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pour-wave,
+  .pour-bubbles span {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,17 @@
+/*
+* One stylesheet for the whole site. Vite inlines these @imports at build time,
+* so the browser makes a single render-blocking request instead of eight.
+* Order matters: skeleton base first, then the brand layers on top.
+*/
+@import './reset.css';
+@import './app.css';
+@import '@fontsource-variable/fredoka/index.css';
+@import 'lenis/dist/lenis.css';
+@import './theme.css';
+@import './home.css';
+@import './shop.css';
+@import './cart.css';
+@import './shell.css';
+@import './pages.css';
+@import './polish.css';
+@import './game.css';

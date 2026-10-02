@@ -1,0 +1,21 @@
+node_modules
+/.DS_Store
+/.cache
+/build
+/dist
+/public/build
+/.mf
+.env
+.env.oxygen
+.shopify
+.react-router
+scripts/qa/out
+.wrangler
+.vercel
+.env*
+*.tsbuildinfo
+
+# Local AI handoff notes (personal details; kept off the public repo)
+/Context.md
+/state.md
+/progress.md

@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "hydrogen-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "hydrogen-dev-alt",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "3003"],
+      "port": 3003,
+      "autoPort": false
+    },
+    {
+      "name": "hydrogen-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["shopify", "hydrogen", "preview", "--build", "--port", "3002", "--inspector-port", "9230"],
+      "port": 3002
+    },
+    {
+      "name": "cloudflare-local",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "wrangler@4", "dev", "--port", "8787", "--ip", "127.0.0.1"],
+      "port": 8787,
+      "autoPort": false
+    }
+  ]
+}

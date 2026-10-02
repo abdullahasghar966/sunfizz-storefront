@@ -1,0 +1,231 @@
+/*
+* --------------------------------------------------
+* Brand tokens (placeholder brand "Sunfizz")
+* --------------------------------------------------
+*/
+:root {
+  --sf-cream: #fff7e8;
+  --sf-ink: #2a1409;
+  --sf-ink-hover: #4a2412;
+  --sf-cocoa: #5a3a28;
+  --sf-tangerine: #ff7a1a; /* decoration only: 2.4:1 on cream */
+  --sf-tangerine-deep: #e0560e; /* accent text: 3.6:1 on cream, large text only */
+  --sf-accent-text: #b8400b; /* accent text at any size: 5.2:1 on cream */
+  --sf-grapefruit: #ff5a5f;
+  --sf-lemon: #ffd23f;
+  --sf-lime: #a8e04c;
+  --sf-peach: #ffb38a;
+  --sf-font-display: 'Fredoka Variable', ui-rounded, system-ui, sans-serif;
+
+  /* Surfaces and lines */
+  --sf-card: rgb(255 255 255 / 0.7);
+  --sf-line: rgb(42 20 9 / 0.08);
+  --sf-line-strong: rgb(42 20 9 / 0.18);
+
+  /* Radii */
+  --sf-radius-s: 16px;
+  --sf-radius-m: 22px;
+  --sf-radius-l: 28px;
+  --sf-radius-xl: 36px;
+
+  /* Layout */
+  --sf-gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --sf-max: 1200px;
+  --sf-max-wide: 1400px;
+
+  /* Type scale (Fredoka) */
+  --sf-text-display: clamp(3.25rem, 8.5vw, 8.25rem); /* homepage hero */
+  --sf-text-h1: clamp(2.75rem, 6vw, 5.5rem); /* page titles */
+  --sf-text-h2: clamp(2rem, 4.5vw, 3.5rem); /* section titles */
+  --sf-text-h3: clamp(1.15rem, 1.8vw, 1.4rem); /* card titles */
+  --sf-text-lead: clamp(1.1rem, 1.5vw, 1.3rem); /* intro copy */
+
+  /* Motion tokens: CSS twins of EASE / DUR in app/lib/motion.ts */
+  --sf-ease-out: cubic-bezier(0.25, 1, 0.5, 1); /* power3.out */
+  --sf-ease-in: cubic-bezier(0.5, 0, 0.75, 0); /* power3.in */
+  --sf-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1); /* power3.inOut */
+  --sf-dur-micro: 0.2s;
+  --sf-dur-fast: 0.35s;
+  --sf-dur-base: 0.6s;
+  --sf-dur-slow: 0.9s;
+
+  /* Focus ring: cream gap + ink ring, visible on every background we use */
+  --sf-focus-ring: 0 0 0 3px var(--sf-cream), 0 0 0 6px var(--sf-ink);
+}
+
+/*
+* --------------------------------------------------
+* Page canvas
+* The skeleton never paints a page background, so any browser whose default
+* canvas is dark (a dark-themed embedded browser, forced themes) showed black
+* text on black. Paint it explicitly; the homepage switches it to cream (home.css).
+* --------------------------------------------------
+*/
+html {
+  background-color: #fff;
+  color-scheme: light;
+}
+
+/*
+* --------------------------------------------------
+* Load reveals
+* Elements marked [data-reveal] start hidden only when JS is running (root.tsx
+* adds html.js before first paint), so no-JS visitors still see everything.
+* If the script never takes over, the fallback animation shows them after 3s.
+* --------------------------------------------------
+*/
+.js [data-reveal] {
+  visibility: hidden;
+  animation: sf-reveal-fallback 0s linear 3s forwards;
+}
+
+.js [data-motion] [data-reveal] {
+  animation: none;
+}
+
+@keyframes sf-reveal-fallback {
+  to {
+    visibility: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    visibility: visible;
+    animation: none;
+  }
+}
+
+/*
+* --------------------------------------------------
+* Icons (lucide-react)
+* --------------------------------------------------
+*/
+.lucide {
+  flex: none;
+}
+
+.sf-with-icon {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.4em;
+}
+
+/* Header actions: icon buttons with a 40px hit area and a cart count badge */
+.header-ctas {
+  grid-gap: 0.25rem;
+}
+
+.header-icon-btn {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  position: relative;
+  transition: background-color var(--sf-dur-micro);
+  width: 40px;
+}
+
+.header-icon-btn:hover {
+  background: rgb(0 0 0 / 0.06);
+  text-decoration: none;
+}
+
+/* .header-icon-btn sets display; keep the skeleton hiding the menu toggle on desktop */
+@media (min-width: 48em) {
+  .header-menu-mobile-toggle {
+    display: none;
+  }
+}
+
+.header-cart-count {
+  background: var(--sf-ink);
+  border-radius: 999px;
+  color: var(--sf-cream);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 18px;
+  min-width: 18px;
+  padding: 0 5px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 2px;
+}
+
+aside header .close {
+  align-items: center;
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+/* Cart line quantity and remove: round icon buttons */
+.cart-line-quantity {
+  align-items: center;
+}
+
+.cart-line-quantity button {
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgb(0 0 0 / 0.2);
+  border-radius: 999px;
+  color: #000;
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.cart-line-quantity button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/*
+* --------------------------------------------------
+* components/motion/CustomCursor
+* --------------------------------------------------
+*/
+html.has-custom-cursor,
+html.has-custom-cursor :is(body, a, button, label, summary, [data-cursor-hover]) {
+  cursor: none;
+}
+
+/* Text fields keep the native I-beam; the dot hides over them. */
+html.has-custom-cursor :is(input, textarea, select, [contenteditable='true']) {
+  cursor: auto;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px; /* GSAP animates width/height (not scale) so the disc stays sharp */
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sf-tangerine);
+  pointer-events: none;
+  z-index: 9999; /* above the drawers (.overlay is 10) */
+  opacity: 0;
+  transition:
+    opacity var(--sf-dur-fast),
+    background-color var(--sf-dur-fast);
+  will-change: transform;
+}
+
+.cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor.is-hover {
+  background: rgb(255 210 63 / 0.55);
+}
+
+.cursor.is-hidden {
+  opacity: 0;
+}

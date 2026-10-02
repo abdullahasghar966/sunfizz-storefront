@@ -1,0 +1,142 @@
+/*
+* --------------------------------------------------
+* Phase 5: error / 404 page and small shared fixes
+* --------------------------------------------------
+*/
+
+/* .sf-btn also works on <button> (Try again) */
+button.sf-btn {
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--sf-font-display);
+}
+
+button.sf-btn--primary {
+  background: var(--sf-ink);
+}
+
+.sf-btn--ghost {
+  border-color: var(--sf-ink);
+}
+
+/* One eyebrow style everywhere (hero, sections, listing, product page) */
+.sf-eyebrow,
+.hero-eyebrow {
+  font-family: var(--sf-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Deferred content that hasn't arrived yet */
+.sf-loading {
+  color: var(--sf-cocoa);
+  font-size: var(--sf-text-lead);
+  padding: 2rem 0;
+}
+
+/* Homepage lineup uses the listing's ProductCard: five across on desktop */
+.home .recommended-products-grid {
+  gap: clamp(0.75rem, 1.8vw, 1.5rem);
+}
+
+/* Touch: the card in the middle of the screen shows its poured glass (ProductGrid) */
+.pcard.is-poured .pcard-img--alt {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pcard.is-poured .pcard-img--main {
+  transform: scale(1.04);
+}
+
+/* Error / 404 page (components/ErrorPage) */
+.not-found {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  margin-inline: auto;
+  max-width: var(--sf-max);
+  min-height: calc(100svh - var(--header-height) - 6rem);
+  overflow: hidden;
+  overflow: clip;
+  padding: clamp(3rem, 8vw, 6rem) 1rem;
+  position: relative;
+  text-align: center;
+}
+
+.not-found-bubbles {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.not-found-bubble {
+  background: rgb(255 255 255 / 0.6);
+  border: 3px solid rgb(255 122 26 / 0.55);
+  border-radius: 50%;
+  bottom: 12%;
+  height: 26px;
+  opacity: 0;
+  position: absolute;
+  width: 26px;
+}
+
+.not-found-code {
+  align-items: center;
+  display: flex;
+  font-size: clamp(6rem, 22vw, 13rem);
+  font-weight: 700;
+  gap: 0.05em;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0.25rem 0 1rem;
+}
+
+.not-found-wheel {
+  display: block;
+  height: 0.78em;
+  width: 0.78em;
+}
+
+.not-found-title {
+  font-size: var(--sf-text-h2);
+  font-weight: 650;
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+}
+
+.not-found-copy {
+  color: var(--sf-cocoa);
+  font-size: var(--sf-text-lead);
+  line-height: 1.5;
+  margin: 0 0 2rem;
+  max-width: 40ch;
+}
+
+.not-found-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.not-found-detail {
+  background: var(--sf-card);
+  border-radius: var(--sf-radius-s);
+  color: var(--sf-cocoa);
+  font-size: 0.85rem;
+  margin-top: 2rem;
+  max-width: 100%;
+  padding: 1rem;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-bubble {
+    display: none;
+  }
+}

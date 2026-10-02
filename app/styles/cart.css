@@ -1,0 +1,513 @@
+/*
+* --------------------------------------------------
+* Phase 4: drawers + cart (overrides the skeleton's app.css)
+* GSAP (components/Aside) owns the drawer's show/hide; nothing here transitions it.
+* --------------------------------------------------
+*/
+.overlay,
+.overlay.expanded {
+  background: none;
+  opacity: 1;
+  right: calc(-1 * var(--sf-scrollbar, 0px)); /* over the locked page's scrollbar gutter (components/Aside) */
+  transition: none;
+}
+
+/* Dimmed, slightly blurred page behind the drawer; also the click-away target. */
+.overlay .close-outside {
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  background: rgb(42 20 9 / 0.32);
+  cursor: pointer;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+}
+
+/* Lock page scroll while any drawer is open (Lenis pauses on overflow: hidden). */
+html:has(.overlay.expanded) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+aside {
+  background: var(--sf-cream);
+  border-radius: var(--sf-radius-l) 0 0 var(--sf-radius-l);
+  box-shadow: -24px 0 60px -20px rgb(42 20 9 / 0.35);
+  color: var(--sf-ink);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  right: calc(-1 * var(--sf-scrollbar, 0px)); /* meets the window edge, gutter included */
+  transition: none;
+  will-change: transform;
+}
+
+.overlay.expanded aside {
+  transform: none; /* GSAP's inline xPercent decides */
+}
+
+aside header {
+  border-bottom: 2px solid var(--sf-line);
+  flex: none;
+  padding: 0 1rem 0 1.5rem;
+}
+
+aside header h3 {
+  font-family: var(--sf-font-display);
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+aside header .close {
+  border-radius: 999px;
+  color: var(--sf-ink);
+  cursor: pointer;
+  opacity: 1;
+  transition: background-color var(--sf-dur-micro);
+}
+
+aside header .close:hover {
+  background: var(--sf-line);
+}
+
+aside .aside-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 1.25rem;
+}
+
+/*
+* --------------------------------------------------
+* Cart layout inside the drawer: lines scroll, summary stays at the bottom
+* --------------------------------------------------
+*/
+aside .cart-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: auto;
+  margin: 0 -1.25rem;
+  max-height: none;
+  min-height: 0;
+  overflow: hidden;
+}
+
+aside .cart-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+aside .cart-lines-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.25rem;
+}
+
+.cart-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* One card per line */
+.cart-line {
+  background: var(--sf-card);
+  border: 2px solid rgb(42 20 9 / 0.07);
+  border-radius: var(--sf-radius-m);
+  /* Spacing as a margin (not the list's gap) so a removed line can collapse it too. */
+  margin: 0 0 0.75rem;
+  padding: 0;
+}
+
+.cart-line-inner {
+  align-items: flex-start;
+  border-radius: 20px;
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.7rem;
+}
+
+.cart-line-media {
+  background: var(--f-bg, #ffe7b8);
+  border-radius: var(--sf-radius-s);
+  flex: none;
+  height: 84px;
+  overflow: hidden;
+  width: 84px;
+}
+
+.cart-line-media img {
+  border-radius: 0;
+  display: block;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  width: 100%;
+}
+
+.cart-line-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.cart-line-title {
+  font-family: var(--sf-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cart-line-title:hover {
+  text-decoration: none;
+  color: var(--f-accent, var(--sf-tangerine-deep));
+}
+
+aside .cart-line-notes,
+.cart-line-notes {
+  align-items: center;
+  color: var(--sf-cocoa);
+  display: flex;
+  font-family: var(--sf-font-display);
+  font-size: 0.82rem;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.cart-line-swatch {
+  background: var(--f-swatch, var(--sf-tangerine));
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(42 20 9 / 0.15);
+  flex: none;
+  height: 12px;
+  width: 12px;
+}
+
+.cart-line-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-line-options li {
+  align-items: center;
+  color: var(--sf-cocoa);
+  display: inline-flex;
+  font-family: var(--sf-font-display);
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.cart-line-options .lucide {
+  color: var(--f-accent, var(--sf-tangerine-deep));
+}
+
+.cart-line-bottom {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+}
+
+.cart-line-total {
+  font-family: var(--sf-font-display);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Quantity stepper: [−] 2 [+]  (bin) */
+.cart-line-quantity {
+  align-items: center;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.cart-line-quantity form {
+  display: flex;
+}
+
+.cart-line-quantity button {
+  background: #fff;
+  border: 1.5px solid var(--sf-line-strong);
+  color: var(--sf-ink);
+  height: 30px;
+  transition:
+    background-color var(--sf-dur-micro),
+    border-color var(--sf-dur-micro);
+  width: 30px;
+}
+
+.cart-line-quantity button:hover:not(:disabled) {
+  background: var(--sf-lemon);
+  border-color: var(--sf-ink);
+}
+
+.cart-line-quantity button[aria-label='Remove'] {
+  border-color: transparent;
+  margin-left: 0.2rem;
+}
+
+.cart-line-quantity button[aria-label='Remove']:hover:not(:disabled) {
+  background: #ffe1e1;
+  border-color: transparent;
+  color: #b3261e;
+}
+
+.cart-line-qty {
+  font-family: var(--sf-font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 1.6ch;
+  text-align: center;
+}
+
+/* Odometer roll (components/cart/AnimatedValue) */
+.num-roll {
+  display: inline-grid;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.num-roll > * {
+  display: inline-block;
+  grid-area: 1 / 1;
+}
+
+.cart-line[data-exiting] {
+  pointer-events: none;
+}
+
+/*
+* --------------------------------------------------
+* Summary + checkout
+* --------------------------------------------------
+*/
+.cart-summary-wrap {
+  flex: none;
+  transition: opacity var(--sf-dur-fast) ease-in;
+}
+
+.cart-summary-wrap[data-leaving] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-summary-wrap {
+    transition: none;
+  }
+}
+
+.cart-summary-aside {
+  background: var(--sf-cream);
+  border-top: 2px solid var(--sf-line);
+  flex: none;
+  padding: 1rem 1.25rem 1.25rem;
+  position: static;
+  width: auto;
+}
+
+.cart-summary-aside h4,
+.cart-summary-page h4 {
+  display: none; /* "Totals" is implied by the subtotal row */
+}
+
+.cart-subtotal {
+  font-family: var(--sf-font-display);
+  justify-content: space-between;
+  margin: 0 0 0.6rem;
+}
+
+.cart-subtotal dt {
+  color: var(--sf-cocoa);
+  font-weight: 600;
+}
+
+.cart-subtotal dd {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  margin: 0;
+}
+
+.cart-summary-aside section[aria-label='Discounts'] input,
+.cart-summary-page section[aria-label='Discounts'] input,
+.cart-summary-aside section[aria-label='Gift cards'] input,
+.cart-summary-page section[aria-label='Gift cards'] input {
+  background: #fff;
+  border: 1.5px solid var(--sf-line-strong);
+  border-radius: 999px;
+  font-family: var(--sf-font-display);
+  font-size: 0.9rem;
+  margin: 0 0.3rem 0.4rem 0;
+  padding: 0.4rem 0.85rem;
+  width: 11rem;
+}
+
+.cart-summary-aside section button,
+.cart-summary-page section button {
+  background: none;
+  border: 1.5px solid var(--sf-line-strong);
+  border-radius: 999px;
+  color: var(--sf-ink);
+  cursor: pointer;
+  font-family: var(--sf-font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+}
+
+.cart-checkout {
+  margin-top: 0.6rem;
+}
+
+.cart-checkout-btn {
+  align-items: center;
+  background: var(--sf-ink);
+  border-radius: 999px;
+  color: var(--sf-cream);
+  display: flex;
+  font-family: var(--sf-font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  gap: 0.6rem;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  transition: background-color var(--sf-dur-micro);
+}
+
+.cart-checkout-btn:hover {
+  background: var(--sf-ink-hover);
+  text-decoration: none;
+}
+
+.cart-checkout-btn[aria-busy] {
+  background: var(--sf-lemon);
+  color: var(--sf-ink);
+}
+
+.cart-checkout-note {
+  align-items: center;
+  color: var(--sf-cocoa);
+  display: flex;
+  font-family: var(--sf-font-display);
+  font-size: 0.8rem;
+  gap: 0.35rem;
+  justify-content: center;
+  margin-top: 0.6rem !important;
+}
+
+/*
+* --------------------------------------------------
+* Empty cart
+* --------------------------------------------------
+*/
+.cart-empty {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.cart-empty[hidden] {
+  display: none;
+}
+
+.cart-empty-art {
+  height: auto;
+  margin-bottom: 1rem;
+  overflow: visible;
+  width: 120px;
+}
+
+.cart-empty-title {
+  font-family: var(--sf-font-display);
+  font-size: 1.5rem;
+  font-weight: 650;
+  margin: 0 0 0.5rem;
+}
+
+aside .cart-empty-copy,
+.cart-empty-copy {
+  color: var(--sf-cocoa);
+  font-family: var(--sf-font-display);
+  line-height: 1.5;
+  margin: 0 0 1.4rem;
+  max-width: 28ch;
+}
+
+.cart-empty-cta:hover {
+  text-decoration: none;
+}
+
+/*
+* --------------------------------------------------
+* Checkout handoff curtain (lib/checkout-handoff)
+* --------------------------------------------------
+*/
+.checkout-curtain {
+  align-items: center;
+  background:
+    radial-gradient(50% 45% at 50% 45%, #fff, transparent 100%),
+    var(--sf-cream);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  z-index: 10001; /* above drawers and the custom cursor */
+}
+
+.checkout-curtain-inner {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.checkout-curtain-art {
+  height: auto;
+  margin-bottom: 1.25rem;
+  overflow: visible;
+  width: 110px;
+}
+
+.checkout-curtain-title {
+  color: var(--sf-ink);
+  font-family: var(--sf-font-display);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 650;
+  margin-bottom: 0.4rem;
+}
+
+.checkout-curtain-sub {
+  color: var(--sf-cocoa);
+  font-family: var(--sf-font-display);
+  font-size: 1rem;
+}
+
+@media (max-width: 30em) {
+  aside {
+    border-radius: 0;
+  }
+}

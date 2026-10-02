@@ -1,0 +1,408 @@
+/*
+* --------------------------------------------------
+* routes/_index
+* --------------------------------------------------
+*/
+html:has(.home) {
+  background-color: var(--sf-cream); /* the whole homepage canvas, not just the stage */
+}
+
+.home {
+  margin-inline: -1rem; /* full-bleed inside body > main's 1rem gutter */
+}
+
+.sf-eyebrow {
+  color: var(--sf-tangerine-deep);
+  font-family: var(--sf-font-display);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+/*
+* --------------------------------------------------
+* components/home/ParallaxStage
+* --------------------------------------------------
+*/
+.parallax-stage {
+  position: relative;
+  isolation: isolate; /* keeps the layers' z-indexes below the sticky header */
+  overflow: hidden;
+  overflow: clip; /* shapes drift past the edges; no sideways scroll */
+  background:
+    radial-gradient(55% 45% at 76% 32%, rgb(255 210 63 / 0.3), transparent 70%),
+    var(--sf-cream);
+  color: var(--sf-ink);
+  --shape-scale: 1;
+}
+
+@media (max-width: 47.99em) {
+  .parallax-stage {
+    --shape-scale: 0.6;
+  }
+
+  .parallax-shape[data-desktop-only] {
+    display: none;
+  }
+}
+
+.parallax-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.parallax-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.parallax-shape {
+  position: absolute;
+  width: calc(var(--size) * var(--shape-scale));
+  will-change: transform;
+}
+
+.parallax-shape svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+* --------------------------------------------------
+* components/home/Hero
+* --------------------------------------------------
+*/
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  max-width: var(--sf-max-wide);
+  min-height: calc(100svh - var(--header-height));
+  margin-inline: auto;
+  padding: clamp(2rem, 5vw, 4rem) var(--sf-gutter);
+}
+
+.hero-eyebrow {
+  color: var(--sf-tangerine-deep);
+  font-family: var(--sf-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-text-display);
+  font-weight: 650; /* end weight of the load-in swell */
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0 0 1.75rem;
+}
+
+.hero-title-line {
+  display: block;
+}
+
+.hero-title-accent {
+  color: var(--sf-tangerine-deep);
+}
+
+.hero-char {
+  will-change: transform;
+}
+
+.hero-tagline {
+  color: var(--sf-cocoa);
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-text-lead);
+  line-height: 1.5;
+  margin-bottom: 2.25rem;
+  max-width: 34ch;
+}
+
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sf-btn {
+  align-items: center;
+  border: 2px solid var(--sf-ink);
+  border-radius: 999px;
+  display: inline-flex;
+  font-family: var(--sf-font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  transition:
+    background-color var(--sf-dur-micro),
+    color var(--sf-dur-micro);
+}
+
+.sf-btn:hover {
+  text-decoration: none;
+}
+
+.sf-btn--primary {
+  background: var(--sf-ink);
+  color: var(--sf-cream);
+}
+
+.sf-btn--primary:hover {
+  background: var(--sf-ink-hover);
+}
+
+.sf-btn--ghost {
+  color: var(--sf-ink);
+}
+
+.sf-btn--ghost:hover {
+  background: rgb(42 20 9 / 0.06);
+}
+
+.hero-product {
+  justify-self: center;
+  max-width: 100%;
+  position: relative;
+  /* Width follows the viewport height too, so the whole can fits on short screens. */
+  width: clamp(160px, calc((100svh - var(--header-height) - 9rem) * 0.55), 330px);
+}
+
+.hero-can {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-can-art {
+  display: block;
+  height: auto;
+  transform: rotate(-6deg); /* resting tilt; GSAP animates the wrappers, never this */
+  width: 100%;
+}
+
+.hero-can-word {
+  fill: var(--sf-ink);
+  font-family: var(--sf-font-display);
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.hero-can-word--accent {
+  fill: var(--sf-tangerine-deep);
+}
+
+.hero-can-shadow {
+  background: radial-gradient(closest-side, rgb(90 58 40 / 0.35), transparent);
+  height: 34px;
+  margin: -6px auto 0;
+  width: 72%;
+}
+
+@media (max-width: 47.99em) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: 2.5rem;
+  }
+
+  .hero-product {
+    width: min(62vw, 240px);
+  }
+}
+
+/*
+* --------------------------------------------------
+* components/home/Benefits
+* --------------------------------------------------
+*/
+.benefits {
+  margin-inline: auto;
+  max-width: var(--sf-max);
+  padding: clamp(3rem, 8vw, 6rem) var(--sf-gutter) clamp(4rem, 10vw, 8rem);
+  scroll-margin-top: var(--header-height); /* native #anchor jumps (reduced motion) */
+}
+
+.benefits-title {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-text-h2);
+  font-weight: 650;
+  line-height: 1.05;
+  margin-bottom: 2.5rem;
+  max-width: 16ch;
+}
+
+.benefits-list {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Tablets: two across, and the odd card out spans the row (icon beside the text) instead of leaving a hole. */
+@media (min-width: 36em) and (max-width: 53.99em) {
+  .benefits-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .benefit:last-child:nth-child(odd) {
+    align-items: start;
+    column-gap: 1.25rem;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .benefit:last-child:nth-child(odd) .benefit-icon {
+    grid-row: span 2;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 35.99em) {
+  .benefits-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benefit {
+  background: rgb(255 255 255 / 0.6);
+  border: 2px solid var(--sf-line);
+  border-radius: var(--sf-radius-l);
+  margin: 0;
+  padding: 1.75rem;
+}
+
+.benefit-icon {
+  align-items: center;
+  border-radius: 18px;
+  color: var(--sf-ink);
+  display: inline-flex;
+  height: 52px;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 52px;
+}
+
+.benefit h3 {
+  font-family: var(--sf-font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.benefit p {
+  color: var(--sf-cocoa);
+  font-family: var(--sf-font-display);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+/*
+* --------------------------------------------------
+* routes/_index: featured collection + recommended products
+* (the skeleton's sections, restyled on the homepage only)
+* --------------------------------------------------
+*/
+.home-shelf {
+  color: var(--sf-ink);
+  margin-inline: auto;
+  max-width: var(--sf-max);
+  padding: clamp(1rem, 3vw, 2rem) var(--sf-gutter) clamp(3.5rem, 8vw, 6rem);
+}
+
+.home .featured-collection {
+  align-items: center;
+  background:
+    radial-gradient(60% 120% at 85% 15%, rgb(255 255 255 / 0.5), transparent 60%),
+    var(--sf-lemon);
+  border-radius: var(--sf-radius-xl);
+  color: var(--sf-ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  justify-content: space-between;
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+  padding: clamp(1.75rem, 4vw, 3rem);
+}
+
+.home .featured-collection:hover {
+  text-decoration: none;
+}
+
+.home .featured-collection-image {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--sf-radius-m);
+  flex: 1 1 18rem;
+  overflow: hidden;
+}
+
+.home .featured-collection h2 {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-text-h2);
+  font-weight: 650;
+  line-height: 1;
+  margin: 0;
+}
+
+.home .featured-collection .sf-eyebrow {
+  color: var(--sf-ink);
+  opacity: 0.75;
+}
+
+.featured-collection-cta {
+  align-items: center;
+  background: var(--sf-ink);
+  border-radius: 999px;
+  color: var(--sf-cream);
+  display: inline-flex;
+  font-family: var(--sf-font-display);
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.85rem 1.6rem;
+  transition: background-color var(--sf-dur-micro);
+  white-space: nowrap;
+}
+
+.home .featured-collection:hover .featured-collection-cta {
+  background: var(--sf-ink-hover);
+}
+
+.home .recommended-products {
+  padding: 0;
+}
+
+.home .recommended-products h2 {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-text-h2);
+  font-weight: 650;
+  line-height: 1.05;
+  margin-bottom: 2rem;
+}
+
+/* Sized for the five-product lineup: five across on desktop, two on phones. */
+.home .recommended-products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+
+@media (max-width: 44.99em) {
+  .home .recommended-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
